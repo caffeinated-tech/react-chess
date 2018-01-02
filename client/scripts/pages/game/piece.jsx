@@ -2,7 +2,7 @@ const React = require('react');
 const ReactDOM = require('react-dom');
 const classNames = require('classnames');
 
-class Pawn extends React.Component {
+class Piece extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -10,12 +10,15 @@ class Pawn extends React.Component {
   }
 
   render() {
+    let klass = classNames("piece", this.props.type, this.props.color, 
+      {selected: this.props.selected});
+
     return (
-      <div className={classNames("piece","pawn", this.props.color, {selected: this.props.selected})}>
+      <div className={klass}>
       </div>
     );
   }
 
 }
 
-module.exports = Pawn;
+module.exports = Piece;

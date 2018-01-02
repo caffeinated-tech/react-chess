@@ -1,5 +1,10 @@
-const Pawn = require('./pawn.js')
-const Square = require('./square.js')
+const Pawn = require('./pawn.js');
+const Rook = require('./rook.js');
+const Knight = require('./knight.js');
+const Bishop = require('./bishop.js');
+const Queen = require('./queen.js');
+const King = require('./king.js');
+const Square = require('./square.js');
 
 // The chess board will be represented as an array of 8 rows (arrays), each
 // containing 8 squares. The squares can contain pieces and other metadata
@@ -75,6 +80,15 @@ class Game {
   }
 
   _setupPieces(){
+    this.board[0][0].setPiece(new Rook('black'));
+    this.board[0][1].setPiece(new Knight('black'));
+    this.board[0][2].setPiece(new Bishop('black'));
+    this.board[0][3].setPiece(new Queen('black'));
+    this.board[0][4].setPiece(new King('black'));
+    this.board[0][5].setPiece(new Bishop('black'));
+    this.board[0][6].setPiece(new Knight('black'));
+    this.board[0][7].setPiece(new Rook('black'));
+
     this.board[1][0].setPiece(new Pawn('black'));
     this.board[1][1].setPiece(new Pawn('black'));
     this.board[1][2].setPiece(new Pawn('black'));
@@ -92,6 +106,14 @@ class Game {
     this.board[6][5].setPiece(new Pawn('white'));
     this.board[6][6].setPiece(new Pawn('white'));
     this.board[6][7].setPiece(new Pawn('white'));
+    this.board[7][0].setPiece(new Rook('white'));
+    this.board[7][1].setPiece(new Knight('white'));
+    this.board[7][2].setPiece(new Bishop('white'));
+    this.board[7][3].setPiece(new Queen('white'));
+    this.board[7][4].setPiece(new King('white'));
+    this.board[7][5].setPiece(new Bishop('white'));
+    this.board[7][6].setPiece(new Knight('white'));
+    this.board[7][7].setPiece(new Rook('white'));
   }
 
   _createRow(row){

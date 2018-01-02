@@ -114,7 +114,7 @@ header {
 				}
 			}
 			&.black{
-				background-color: #000;
+				background-color: #481b00;
 				&.selected{
 					background-color: #00a5b7;
 				}
@@ -141,6 +141,46 @@ header {
 					}
 					&.black{
 						background-image:url('images/pieces/black/pawn.png');	
+					}
+				}
+				&.rook{
+					&.white{
+						background-image:url('images/pieces/white/rook.png');	
+					}
+					&.black{
+						background-image:url('images/pieces/black/rook.png');	
+					}
+				}
+				&.knight{
+					&.white{
+						background-image:url('images/pieces/white/knight.png');	
+					}
+					&.black{
+						background-image:url('images/pieces/black/knight.png');	
+					}
+				}
+				&.bishop{
+					&.white{
+						background-image:url('images/pieces/white/bishop.png');	
+					}
+					&.black{
+						background-image:url('images/pieces/black/bishop.png');	
+					}
+				}
+				&.queen{
+					&.white{
+						background-image:url('images/pieces/white/queen.png');	
+					}
+					&.black{
+						background-image:url('images/pieces/black/queen.png');	
+					}
+				}
+				&.king{
+					&.white{
+						background-image:url('images/pieces/white/king.png');	
+					}
+					&.black{
+						background-image:url('images/pieces/black/king.png');	
 					}
 				}
 				&.selected {

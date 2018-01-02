@@ -2,7 +2,7 @@ const React = require('react');
 const ReactDOM = require('react-dom');
 const classNames = require('classnames')
 
-const Pawn = require('./pawn.jsx')
+const Piece = require('./piece.jsx')
 const Actions = require('./actions.js');
 
 class Square extends React.Component {
@@ -21,23 +21,11 @@ class Square extends React.Component {
           selected: this.props.selected,
           lastMove: this.props.lastMove
         })}>
-        { this.renderPiece() }
+        <Piece {...this.props.piece}/>
       </div>
     );
   }
-
-  renderPiece(){
-    if(this.props.piece == null){
-      return null;
-    }
-    switch(this.props.piece.type){
-      case 'pawn':
-        return <Pawn {...this.props.piece}/>;
-      default:
-        return null;
-    }
-  }
-
+  
   onClick() {
     Actions.clickSquare(this.props.row, this.props.column, this.props.piece);
   }
