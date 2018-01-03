@@ -16,6 +16,10 @@ class Piece {
     this.row = row;
     this.column = column;
   }
+
+  _isOffBoard(row, column){
+    return (row < 0 || row > 7 || column < 0 || column > 7);
+  }
 }
 
 module.exports = Piece;
