@@ -2,6 +2,9 @@ const React = require('react');
 const ReactDOM = require('react-dom');
 const { Switch, Route, Link } = require('react-router-dom');
 const classNames = require('classnames')
+const { DragDropContext } = require('react-dnd');
+const HTML5Backend = require('react-dnd-html5-backend');
+
 
 const Square = require('./square.jsx')
 const Actions = require('./actions.js');
@@ -28,4 +31,5 @@ class Board extends React.Component {
   }
 }
 
-module.exports = Board;
+// make the board a container for drag & drop actions
+module.exports = DragDropContext(HTML5Backend)(Board);

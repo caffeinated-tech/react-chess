@@ -26,6 +26,18 @@ class GameStore extends Reflux.Store {
     this.setState({board: newBoard});
   }
 
+  onDragPiece(row, column){
+    console.log('drag from',row,column);
+    let newBoard = this.game.selectSquare(row, column);
+    this.setState({board: newBoard});
+  }
+
+  onDropOnSquare(row, column){
+    console.log('drop in store',row,column);
+    let newBoard = this.game.clickSquare(row, column);
+    this.setState({board: newBoard});
+  }
+
   // private methods
 
 

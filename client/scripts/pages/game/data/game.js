@@ -18,6 +18,19 @@ class Game {
     this.selectedSquare = null
   }
 
+  // select a square for a drag start event
+  selectSquare(row, column){
+    this.clearHighlightedSquares();
+    let targetSquare = this.board[row][column];
+    this.selectedSquare = targetSquare;
+    // calculate and mark valid squares this piece can  move to
+    let moves = targetSquare.piece.getValidMoves(this.board);
+    moves.forEach(function(coordinates){
+      this.board[coordinates[0]][coordinates[1]].validMove = true;
+    }, this);
+    return this.board;
+  };
+
   // interacting with the game
   clickSquare(row, column){
   	let targetSquare = this.board[row][column];

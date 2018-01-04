@@ -112,6 +112,10 @@ header {
 						background-color: #22b700;
 					}
 				}
+        &.isOver,
+        &.empty.isOver.valid{
+          background-color: #00a5b7;
+        }
 			}
 			&.black{
 				background-color: #481b00;
@@ -127,6 +131,10 @@ header {
 						background-color: #0f5000;
 					}
 				}
+        &.isOver,
+        &.empty.isOver.valid{
+          background-color: #00a5b7;
+        }
 			}
 			.piece{
 				width:100%;
@@ -135,6 +143,9 @@ header {
 			    background-repeat:   no-repeat;
 			    background-position: center center;   
 			    cursor: pointer;
+        &.dragging{
+          border:2px solid red;
+        }
 				&.pawn{
 					&.white{
 						background-image:url('images/pieces/white/pawn.png');	
