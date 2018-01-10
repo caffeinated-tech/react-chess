@@ -76,9 +76,14 @@ header {
 		color:#333;
 		&.active{
 			background-color:#fff;
-			color:#000;
+			color:#000 !important;
 		}
-	}
+  }
+}
+.pure-form .pure-control-group{
+   input {
+    color: #000;
+  }
 }
 
 // board page

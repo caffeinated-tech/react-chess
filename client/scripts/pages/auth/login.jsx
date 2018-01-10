@@ -2,7 +2,7 @@ const React = require('react');
 const ReactDOM = require('react-dom');
 const { Switch, Route, Link } = require('react-router-dom');
 
-class AuthPage extends React.Component {
+class LoginForm extends React.Component {
    render() {
       return (
         <form className="pure-form pure-form-aligned">
@@ -26,4 +26,4 @@ class AuthPage extends React.Component {
    }
 }
 
-module.exports = AuthPage;
+module.exports = LoginForm;

@@ -15,7 +15,6 @@ class GamePage extends Reflux.Component {
   }
 
   render() {
-    console.log('board state', this.state);
     return (
       <div className="centered">
         <div className="pure-g">

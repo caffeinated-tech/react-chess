@@ -17,10 +17,18 @@
   },
   "homepage": "https://github.com/caffeinated-tech/react-chess#readme",
   "dependencies": {
+    "axios": "^0.17.1",
+    "bcrypt": "^1.0.3",
+    "bcrypt-nodejs": "0.0.3",
+    "body-parser": "^1.18.2",
     "classnames": "^2.2.5",
     "express": "^4.16.2",
+    "express-session": "^1.15.6",
     "jquery": "^3.2.1",
     "materialize-css": "^0.100.2",
+    "morgan": "^1.9.0",
+    "passport": "^0.4.0",
+    "passport-local": "^1.0.0",
     "react": "^16.2.0",
     "react-dnd": "^2.5.4",
     "react-dnd-html5-backend": "^2.5.4",
@@ -28,7 +36,8 @@
     "react-router-dom": "^4.2.2",
     "reflux": "^6.4.1",
     "sass-loader": "^6.0.6",
-    "sequelize": "^4.28.6"
+    "sequelize": "^4.28.6",
+    "sqlite3": "^3.1.13"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",

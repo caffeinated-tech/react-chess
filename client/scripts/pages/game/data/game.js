@@ -120,6 +120,7 @@ class Game {
     this.board[6][6].setPiece(new Pawn('white'));
     this.board[6][7].setPiece(new Pawn('white'));
     this.board[7][0].setPiece(new Rook('white'));
+    
     this.board[7][1].setPiece(new Knight('white'));
     this.board[7][2].setPiece(new Bishop('white'));
     this.board[7][3].setPiece(new Queen('white'));
