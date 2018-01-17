@@ -1,7 +1,15 @@
 const React = require('react');
+const Reflux = require('reflux');
 const { NavLink, Link } = require('react-router-dom');
 
-class Header extends React.Component {
+const AuthStore = require('./pages/auth/store.js')
+
+
+class Header extends Reflux.Component {
+  constructor(props){
+    super(props);
+    this.store = AuthStore;
+  }
   render() {
     return (
 	  <header className="pure-menu pure-menu-horizontal pure-menu-fixed">
@@ -16,12 +24,22 @@ class Header extends React.Component {
 	        		className="pure-menu-link"
 		    	  	activeClassName="active">Home</NavLink>
         	</li>
-	        <li className="pure-menu-item">
-	        	<NavLink 
-	        		to="/login" 
-	        		className="pure-menu-link"
-		    	  	activeClassName="active">Login / Register</NavLink>
-        	</li>
+          { this.state.user == undefined ?
+  	        <li className="pure-menu-item">
+  	        	<NavLink 
+  	        		to="/login" 
+  	        		className="pure-menu-link"
+  		    	  	activeClassName="active">Login / Register</NavLink>
+          	</li>
+            :
+            <li className="pure-menu-item">
+              <NavLink 
+                to="/profile" 
+                className="pure-menu-link"
+                activeClassName="active"
+                title={"Welcome back " + this.state.user.username}>Profile</NavLink>
+            </li>
+          }
 	        <li className="pure-menu-item">
 	        	<NavLink 
 	        		to="/game" 

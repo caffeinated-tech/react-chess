@@ -71,10 +71,12 @@ Server.post('/api/auth/signup', function (req, res, next) {
 
 const serverSideRender = function(req,res){
   const context = {};
-
+  const props = {
+    user: req.user && req.user.serialize()
+  };
   let html = ReactDOMServer.renderToString(   
     React.createElement(StaticRouter, { location: req.url, context: context },
-      React.createElement(ServerPage)
+      React.createElement(ServerPage, props)
     )
   );
   res.send(html);
@@ -93,8 +95,5 @@ function isLoggedIn(req, res, next) {
 
 Server.get('/game', isLoggedIn, serverSideRender);
 Server.get('*', serverSideRender);
-
-
-
 
 Server.listen(3000)

@@ -18,6 +18,12 @@ class GameStore extends Reflux.Store {
     this.listenToMany(Actions);
   }
 
+
+  initializeState(props) {
+    console.log('TODO: init state in game store')
+  }
+
+
   // action callbacks
 
   onClickSquare(row, column, piece){

@@ -13,8 +13,12 @@ class AuthStore extends Reflux.Store {
     this.display = {
       form: 'login'
     }
-
     this.listenToMany(Actions);
+  }
+
+  initializeState(props) {
+    this.user = props.user;
+    this.setState({ user: this.user });
   }
 
   // action callbacks
@@ -26,12 +30,16 @@ class AuthStore extends Reflux.Store {
   onSignupCompleted(response){
     console.log('onSignupCompleted', response)
     console.log('data', response.data)
+    this.user = response.data.user;
+    this.setState({ user: this.user })
   }
 
   onSignupFailed(){
     console.log('onSignupFailed')
 
   }
+
+
 
   // private methods
 }

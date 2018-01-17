@@ -7,7 +7,8 @@ const Home = require('./pages/home.jsx')
 const Auth = require('./pages/auth.jsx')
 const Game = require('./pages/game.jsx')
 
-
+const AuthStore = require('./pages/auth/store.js')
+const GameStore = require('./pages/game/store.js')
 
 class NoMatch extends React.Component {
    render() {
@@ -20,7 +21,16 @@ class NoMatch extends React.Component {
 }
 
 class App extends React.Component {
-   render() {
+  // The props that are passed to the App component (by both the server side 
+  //  rendered and client side pages) needs to be passed to the stores which 
+  //  then distribute these details to their pages
+  constructor(props){
+    super(props);
+    AuthStore.initializeState(props);
+    GameStore.initializeState(props);
+  }
+
+  render() {
     return (
       <div id="page">
         <Header/>

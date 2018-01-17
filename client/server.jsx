@@ -15,12 +15,17 @@ class ServerPage extends React.Component {
           <title> 
             React-Chess
           </title>
+          {/*
+            The props as json can be parsed and used to rehydrate the App react 
+            component in the client side.
+          */}
+          <meta name="props" content={JSON.stringify(this.props)}/>
         </head>
         <body>
           <div id="background">
           </div>
           <div id="app-mount">
-            <App></App>
+            <App {...this.props}/>
           </div>
           <script src="client.js"></script>
         </body>
