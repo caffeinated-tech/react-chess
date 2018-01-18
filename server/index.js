@@ -7,15 +7,19 @@ const session = require('express-session');
 const bodyParser = require('body-parser');
 // pretty log formatting
 const morgan = require('morgan')
-
+// persistant session in memory & filesystem
+// Installation instructions here: 
+// https://www.digitalocean.com/community/tutorials/how-to-install-and-use-redis
+const RedisStore = require('connect-redis')(session);
+ 
 
 // load initializers to setup database, models etc.
 Database = require('./initializers/database.js')
 Passport = require('./initializers/auth.js')
 
 // to get around module loading problems (it's a compiled webpack module 
-// 	so there is no export, instead the server.js file exposes a global
-// 	called ServerPage)
+//  so there is no export, instead the server.js file exposes a global
+//  called ServerPage)
 require('../public/server.js');
 
 const Server = express()
@@ -23,9 +27,13 @@ Server.use(express.static('public'));
 Server.use(bodyParser.urlencoded({ extended: true }));
 Server.use(bodyParser.json());
 Server.use(session({
+  store: new RedisStore({
+    url: 'http://localhost:6379'
+  }),
   secret: 'correct horse battery staple',
-  resave: true, 
-  saveUninitialized:true}));
+  resave: false
+}));
+
 Server.use(Passport.initialize());
 Server.use(Passport.session());
 Server.use(morgan('combined'));
