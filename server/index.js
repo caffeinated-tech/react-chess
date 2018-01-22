@@ -23,12 +23,13 @@ Passport = require('./initializers/auth.js')
 require('../public/server.js');
 
 const Server = express()
+
 Server.use(express.static('public'));
 Server.use(bodyParser.urlencoded({ extended: true }));
 Server.use(bodyParser.json());
 Server.use(session({
   store: new RedisStore({
-    url: 'http://localhost:6379'
+    url: 'redis://localhost:6379'
   }),
   secret: 'correct horse battery staple',
   resave: false
@@ -48,7 +49,7 @@ Server.get('/', (req, res) => {
 //  response would be faster and lighter
 Server.post('/api/auth/signup', function (req, res, next) {
 
-  Passport.authenticate('local', function(err, user, info) {
+  Passport.authenticate('local-signup', function(err, user, info) {
     if (err) { 
       // Something went wrong, this will log the problem to STDOUT and node 
       //  should return a http 500 status (internal server error) 
@@ -75,12 +76,52 @@ Server.post('/api/auth/signup', function (req, res, next) {
 
 });
 
+Server.post('/api/auth/login', function (req, res, next) {
+
+  Passport.authenticate('local-login', function(err, user, info) {
+    if (err) { 
+      // Something went wrong, this will log the problem to STDOUT and node 
+      //  should return a http 500 status (internal server error) 
+      //  https://httpstatuses.com/500
+      return res.status(403).json({msg: 'went wrong'});
+    } else if (!user) {
+      // http 403 (forbidden) https://httpstatuses.com/403. Can leave the 
+      //  response body as the status is enough for the form to show a generic 
+      //  error.
+      return res.status(403).json({msg: 'error'});
+    } else { 
+      // successful login - log the user in via passport middleware's login 
+      //   method which is exposed on the request object
+      req.login(user, function(err) {
+        if (err){
+          return next(err);
+        } else {
+          // TODO: return some user info
+          return res.json({user: user.serialize()});
+        }
+      });
+    }
+  })(req, res, next);
+});
+
+Server.post('/api/auth/logout', function (req, res, next) {
+  req.logout();
+  return res.status(204).json({});
+});
 // TODO: login method needed which won't create new user if they already exist
 
 const serverSideRender = function(req,res){
   const context = {};
   const props = {
     user: req.user && req.user.serialize()
+  };
+
+  // emulate the global routerHistory used by the client side router for 
+  //  correctly highlight active links
+  global.RouterHistory = {
+    location: {
+      pathname: req.url
+    }
   };
   let html = ReactDOMServer.renderToString(   
     React.createElement(StaticRouter, { location: req.url, context: context },

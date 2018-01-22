@@ -36,9 +36,9 @@ class App extends React.Component {
         <Header/>
         <main>
           <Switch>
-            <Route exact path='/home' component={ Home } />
-            <Route exact path='/login' component={ Auth } />
-            <Route exact path='/game' component={ Game } />
+            <Route path='/home' component={ Home } />
+            <Route path='/auth' component={ Auth } />
+            <Route path='/game' component={ Game } />
             <Route component={NoMatch}/>
           </Switch>
         </main>

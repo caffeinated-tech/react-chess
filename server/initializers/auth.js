@@ -6,11 +6,11 @@ const Sequelize = require('sequelize');
 const Passport = require('passport');
 let LocalStrategy = require('passport-local').Strategy;
 
-// authenticate a user via username & password
-function authenticate(username, password, done){
+// create a user with username & password
+function signup(username, password, done){
   User.findOne({ where: { username: username } }).then(function(user) {
-    // if no user was found with this username, assume we are in the signup phase
-    //  and create one and log them in
+    console.log('signup... user', user);
+    // if no user was found with this username, we can safely create a new user
     if (!user) {
       return User.create({username: username, password: password})
         .then(function(newUser, created) {
@@ -20,18 +20,32 @@ function authenticate(username, password, done){
             return done(null, newUser);
           }
         });
-    } else if (!user.validPassword(password)) {
-      // if the user was found, check the password to try and log them in.
-        // invalid password, don't log them in by returning false
-        return done(null, false);
     } else {
-      // valid password, log them in by returning the user
-      return done(null, user);
+      // user already exists, can't create another with the same username
+      return done(null, false);
     }
   });
 };
 
-Passport.use(new LocalStrategy(authenticate));
+// authenticate a user via username & password
+function login(username, password, done){
+  User.findOne({ where: { username: username } }).then(function(user) {
+    if (!user) {
+      // if no user was found, return a generic error.
+      return done(null, false);
+    } else if (user.validPassword(password)) {
+      // if the user was found, check the password to try and log them in.
+      // valid password, log them in by returning the user
+      return done(null, user);
+    } else {
+      // invalid password, don't log them in by returning false
+      return done(null, false);
+    }
+  });
+};
+
+Passport.use('local-signup',new LocalStrategy(signup));
+Passport.use('local-login',new LocalStrategy(login));
 
 // How we serialize the user into a session store (eg cookie) - just use the 
 //  user id as this is enough to load the user object from again.

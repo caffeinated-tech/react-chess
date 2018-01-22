@@ -1,11 +1,16 @@
 const React = require('react');
 const ReactDOM = require('react-dom');
-const { BrowserRouter } = require('react-router-dom')
+const { Router } = require('react-router-dom');
+const createHistory = require('history/').createBrowserHistory;
+
 
 // this requires jquery - let's leave it for now
 // require('./scripts/materialize');
 
 const App = require('./scripts/index.jsx');
+
+// global history object for changing routes
+window.RouterHistory = createHistory();
 
 // styling can only be loaded in the client version as the webpacker loaders
 //  related to stylesheets require browser context
@@ -19,9 +24,9 @@ let props = JSON.parse(propsJSON);
 
 function run(){
   ReactDOM.hydrate(
-      <BrowserRouter>
+      <Router history={RouterHistory}>
         <App {...props} />
-      </BrowserRouter>
+      </Router>
     , document.querySelector('#app-mount'));
 }
 

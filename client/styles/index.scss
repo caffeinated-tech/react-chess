@@ -21,6 +21,9 @@ body {
 main {
 	padding-top:4rem;
 	flex: 1 0 auto;
+  .pure-g {
+    letter-spacing:0 !important;
+  }
 }
 
 .centered {
@@ -71,10 +74,9 @@ header {
 // auth page
 
 .form-switch {
-	button {
-		background-color:#aaa;
-		color:#333;
-		&.active{
+	.pure-menu-link {
+    display: inline-block;
+    &.active{
 			background-color:#fff;
 			color:#000 !important;
 		}

@@ -6,14 +6,14 @@ const classNames = require('classnames')
 
 const LoginForm = require('./auth/login.jsx')
 const RegisterForm = require('./auth/register.jsx')
+const Profile = require('./auth/profile.jsx')
 const AuthStore = require('./auth/store.js');
+const LoggedOutHeader = require('./auth/logged_out_header.jsx');
+const LoggedInHeader = require('./auth/logged_in_header.jsx');
 
 class AuthPage extends Reflux.Component {
   constructor(props) {
     super(props);
-    this.state = { 
-      form: 'login' 
-    };
     this.store = AuthStore; 
   }
 
@@ -21,28 +21,24 @@ class AuthPage extends Reflux.Component {
     return (
       <div className="centered">
         <div className="pure-g">
-          <div className="pure-u-1 form-switch">
-            <button 
-              onClick={this.changeFormView.bind(this,'login')}
-              className={classNames("button-xlarge", { 
-                active: this.state.form == 'login'})}>Login</button>
-            <button 
-              onClick={this.changeFormView.bind(this,'register')}
-              className={classNames("button-xlarge", { 
-                active: this.state.form == 'register'})}>Register</button>
-            <hr/>
-          </div>
+          { this.state.user == null 
+            ? <LoggedOutHeader/>
+            : <LoggedInHeader {...this.state}/>
+          }
+          <Switch>
+            <Route path="/auth/login" render={ () => (
+              <LoginForm {...this.state}/>
+            )}/>
+            <Route path="/auth/signup" render={ () => (
+              <RegisterForm {...this.state}/>
+            )}/>
+            <Route path="/auth/profile" render={ () => (
+              <Profile {...this.state}/>
+            )}/>
+          </Switch>
         </div>
-        { this.state.form == 'login' 
-          ? <LoginForm/>
-          : <RegisterForm/>
-        }
       </div>
     );
-  }
-
-  changeFormView(newView) {
-    this.setState({ form: newView });
   }
 }
 

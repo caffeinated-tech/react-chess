@@ -8,6 +8,9 @@ var AuthActions = Reflux.createActions({
   },
   'signup': {
     children: ['completed', 'failed']
+  },
+  'logout': {
+    children: ['completed', 'failed']
   }
 });
 
@@ -25,6 +28,12 @@ AuthActions.login.listen( function({username, password}) {
     username: username,
     password: password 
   }).then(this.completed)
+    .catch(this.failed);
+});
+
+AuthActions.logout.listen( function({username, password}) {
+  axios.post('/api/auth/logout', {}
+   ).then(this.completed)
     .catch(this.failed);
 });
 

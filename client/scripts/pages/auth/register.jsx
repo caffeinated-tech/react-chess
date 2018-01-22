@@ -6,6 +6,7 @@ const Actions = require('./actions.js')
 class RegisterForm extends React.Component {
   constructor(){
     super()
+    // placeholder for refs to uncontrolled form components
     this.fields = {};
   }
 
@@ -50,7 +51,7 @@ class RegisterForm extends React.Component {
               type="button" 
               onClick={this.submitForm.bind(this)}
               className="pure-button pure-button-primary">
-              Submit
+              Signup
             </button>
           </div>
         </fieldset>
@@ -59,17 +60,10 @@ class RegisterForm extends React.Component {
   }
 
   submitForm() {
-    console.log('submit forms')
-    console.log({
-      username: this.fields.username.value,
-      email: this.fields.email.value,
-      password: this.fields.password.value,
-      passwordConfirm: this.fields.passwordConfirm.value
-    })
-    // todo compare password with retyped version
+    // compare both passwords to ensure user didn't make any typos
     let password = this.fields.password.value;
     let passwordConfirm = this.fields.passwordConfirm.value;
-    console.log(password);
+    
     if(password == passwordConfirm){
       Actions.signup({
         username: this.fields.username.value,

@@ -27,7 +27,7 @@ class ServerPage extends React.Component {
           <div id="app-mount">
             <App {...this.props}/>
           </div>
-          <script src="client.js"></script>
+          <script src="/client.js"></script>
         </body>
       </html>
     );

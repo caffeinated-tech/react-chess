@@ -27,14 +27,15 @@ class Header extends Reflux.Component {
           { this.state.user == undefined ?
   	        <li className="pure-menu-item">
   	        	<NavLink 
-  	        		to="/login" 
+  	        		to="/auth/login" 
   	        		className="pure-menu-link"
+                isActive={(match, location) => {return location.pathname.match(/^\/auth/)}}
   		    	  	activeClassName="active">Login / Register</NavLink>
           	</li>
             :
             <li className="pure-menu-item">
               <NavLink 
-                to="/profile" 
+                to="/auth/profile" 
                 className="pure-menu-link"
                 activeClassName="active"
                 title={"Welcome back " + this.state.user.username}>Profile</NavLink>
