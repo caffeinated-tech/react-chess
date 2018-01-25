@@ -2,6 +2,8 @@ const Reflux = require('reflux');
 
 const Actions = require('./actions.js')
 
+const socket = require('./socket.js')
+
 class AuthStore extends Reflux.Store {
   constructor() {
     super();
