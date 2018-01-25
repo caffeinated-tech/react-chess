@@ -74,8 +74,6 @@ class AuthStore extends Reflux.Store {
     console.log('onLogoutFailed')
   }
 
-
-
   // private methods
 }
 
