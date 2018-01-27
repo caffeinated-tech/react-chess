@@ -2108,8 +2108,6 @@ var Reflux = __webpack_require__(8);
 
 var Actions = __webpack_require__(29);
 
-var socket = __webpack_require__(185);
-
 var AuthStore = function (_Reflux$Store) {
   _inherits(AuthStore, _Reflux$Store);
 
@@ -2152,6 +2150,9 @@ var AuthStore = function (_Reflux$Store) {
       this.user = response.data.user;
       this.setState({ user: this.user });
       RouterHistory.push('/auth/profile');
+      if (typeof window !== 'undefined') {
+        window.socket.restartSocket();
+      }
     }
   }, {
     key: 'onSignupFailed',
@@ -2171,6 +2172,9 @@ var AuthStore = function (_Reflux$Store) {
       this.user = response.data.user;
       this.setState({ user: this.user });
       RouterHistory.push('/auth/profile');
+      if (typeof window !== 'undefined') {
+        window.socket.restartSocket();
+      }
     }
   }, {
     key: 'onLoginFailed',
@@ -2190,6 +2194,9 @@ var AuthStore = function (_Reflux$Store) {
       RouterHistory.push('/auth/login');
       this.user = null;
       this.setState({ user: this.user });
+      if (typeof window !== 'undefined') {
+        window.socket.restartSocket();
+      }
     }
   }, {
     key: 'onLogoutFailed',
@@ -27724,21 +27731,30 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+// Libraries
 var React = __webpack_require__(0);
 var ReactDOM = __webpack_require__(5);
 
 var _require = __webpack_require__(7),
     Switch = _require.Switch,
-    Route = _require.Route,
-    Link = _require.Link;
+    Route = _require.Route;
+
+// Layout
+
 
 var Header = __webpack_require__(155);
+
+// Pages
 var Home = __webpack_require__(186);
 var Auth = __webpack_require__(187);
 var Game = __webpack_require__(193);
 
+// Data stores
 var AuthStore = __webpack_require__(28);
 var GameStore = __webpack_require__(116);
+
+// 404 page not found page
+// TODO: move to separate page, add some useful links?
 
 var NoMatch = function (_React$Component) {
   _inherits(NoMatch, _React$Component);
@@ -27762,6 +27778,64 @@ var NoMatch = function (_React$Component) {
 
   return NoMatch;
 }(React.Component);
+
+// TODO: need some sort of communication class / store for managing interaction 
+//  with the server. It needs to be global is it will be used in many places, 
+//  and I want logged in users and guests to have a session for viewing games 
+//  and interacting.
+
+
+if (typeof window !== 'undefined') {
+  // Good documentation on web sockets: 
+  //  https://developer.mozilla.org/en-US/docs/Web/API/WebSocket
+  var Socket = function () {
+    function Socket() {
+      _classCallCheck(this, Socket);
+
+      this.socket = this._openSocket();
+    }
+
+    _createClass(Socket, [{
+      key: 'restartSocket',
+      value: function restartSocket() {
+        this.socket.close();
+        this.socket = this._openSocket();
+      }
+
+      // private methods (not really private, but using the convention to prefix
+      //  methods with an underscore to mark them as private )
+
+    }, {
+      key: '_handleIncomingMessage',
+      value: function _handleIncomingMessage(event) {
+        console.log(event);
+        console.log("from socket");
+        console.log("raw", event.data);
+        console.log("parsed", JSON.parse(event.data));
+      }
+    }, {
+      key: '_openSocket',
+      value: function _openSocket() {
+        // websocket server is running on the same host and port
+        //  as the http server
+        var socket = new WebSocket('ws://' + window.location.host);
+        socket.onopen = function open() {
+          // TODO: do we need to send / receive any info here?
+        };
+
+        socket.onmessage = this._handleIncomingMessage;
+        return socket;
+      }
+    }]);
+
+    return Socket;
+  }();
+
+  window.socket = new Socket();
+}
+
+// Main app view, for choosing which page to show, and initializing data in the
+//  reflux stores.
 
 var App = function (_React$Component2) {
   _inherits(App, _React$Component2);
@@ -29993,36 +30067,7 @@ module.exports = function spread(callback) {
 
 
 /***/ }),
-/* 185 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-module.exports = function (sessionID) {
-  window.WebSocket = window.WebSocket || window.MozWebSocket;
-
-  var socket = new WebSocket('ws://localhost:3000');
-  socket.onopen = function open() {
-    var message = JSON.stringify({
-      type: 'move',
-      payload: { from: 'awd' } });
-    socket.send(message);
-  };
-
-  socket.onmessage = function incoming(data) {
-    console.log("from socket", data);
-    setTimeout(function () {
-      socket.send('message');
-    }, 1000);
-  };
-
-  if (window != undefined) {
-    window.socket = socket;
-  }
-};
-
-/***/ }),
+/* 185 */,
 /* 186 */
 /***/ (function(module, exports, __webpack_require__) {
 

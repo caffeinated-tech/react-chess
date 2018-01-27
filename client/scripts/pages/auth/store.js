@@ -2,8 +2,6 @@ const Reflux = require('reflux');
 
 const Actions = require('./actions.js')
 
-const socket = require('./socket.js')
-
 class AuthStore extends Reflux.Store {
   constructor() {
     super();
@@ -35,7 +33,9 @@ class AuthStore extends Reflux.Store {
     this.user = response.data.user;
     this.setState({ user: this.user });
     RouterHistory.push('/auth/profile');
-
+    if (typeof window !== 'undefined') { 
+      window.socket.restartSocket()
+    }
   }
 
   onSignupFailed(){
@@ -53,6 +53,9 @@ class AuthStore extends Reflux.Store {
     this.user = response.data.user;
     this.setState({ user: this.user });
     RouterHistory.push('/auth/profile');
+    if (typeof window !== 'undefined') { 
+      window.socket.restartSocket()
+    }
   }
 
   onLoginFailed(){
@@ -70,6 +73,9 @@ class AuthStore extends Reflux.Store {
     RouterHistory.push('/auth/login');
     this.user = null;
     this.setState({ user: this.user });
+    if (typeof window !== 'undefined') { 
+      window.socket.restartSocket()
+    }
   }
 
   onLogoutFailed(){
