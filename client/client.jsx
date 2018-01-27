@@ -3,7 +3,6 @@ const ReactDOM = require('react-dom');
 const { Router } = require('react-router-dom');
 const createHistory = require('history/').createBrowserHistory;
 
-
 // this requires jquery - let's leave it for now
 // require('./scripts/materialize');
 

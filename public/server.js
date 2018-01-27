@@ -30762,46 +30762,30 @@ var _require = __webpack_require__(7),
 
 var classNames = __webpack_require__(10);
 
-var Board = __webpack_require__(194);
-var GameStore = __webpack_require__(116);
+var Lobby = __webpack_require__(325);
+var New = __webpack_require__(326);
+var Spectate = __webpack_require__(327);
+var Play = __webpack_require__(328);
 
 var GamePage = function (_Reflux$Component) {
   _inherits(GamePage, _Reflux$Component);
 
-  function GamePage(props) {
+  function GamePage() {
     _classCallCheck(this, GamePage);
 
-    var _this = _possibleConstructorReturn(this, (GamePage.__proto__ || Object.getPrototypeOf(GamePage)).call(this, props));
-
-    _this.state = {}; // our store will add its own state to the component's
-    _this.store = GameStore; // <- just assign the store class itself
-    return _this;
+    return _possibleConstructorReturn(this, (GamePage.__proto__ || Object.getPrototypeOf(GamePage)).apply(this, arguments));
   }
 
   _createClass(GamePage, [{
     key: 'render',
     value: function render() {
       return React.createElement(
-        'div',
-        { className: 'centered' },
-        React.createElement(
-          'div',
-          { className: 'pure-g' },
-          React.createElement(
-            'div',
-            { className: 'pure-u-1' },
-            React.createElement(
-              'h1',
-              null,
-              'Game View'
-            )
-          ),
-          React.createElement(
-            'div',
-            { className: 'pure-u-1' },
-            React.createElement(Board, this.state)
-          )
-        )
+        Switch,
+        null,
+        React.createElement(Route, { path: '/game/new', component: New }),
+        React.createElement(Route, { path: '/game/watch', component: Spectate }),
+        React.createElement(Route, { path: '/game/play', component: Play }),
+        React.createElement(Route, { component: Lobby })
       );
     }
   }]);
@@ -38213,6 +38197,348 @@ global.ServerPage = ServerPage;
 
 module.exports = ServerPage;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(41)))
+
+/***/ }),
+/* 325 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var React = __webpack_require__(0);
+var Reflux = __webpack_require__(8);
+var ReactDOM = __webpack_require__(5);
+
+var _require = __webpack_require__(7),
+    Switch = _require.Switch,
+    Route = _require.Route,
+    Link = _require.Link;
+
+var classNames = __webpack_require__(10);
+
+var Lobby = function (_Reflux$Component) {
+  _inherits(Lobby, _Reflux$Component);
+
+  function Lobby(props) {
+    _classCallCheck(this, Lobby);
+
+    var _this = _possibleConstructorReturn(this, (Lobby.__proto__ || Object.getPrototypeOf(Lobby)).call(this, props));
+
+    _this.state = {
+      code: ''
+    };
+    return _this;
+  }
+
+  _createClass(Lobby, [{
+    key: 'render',
+    value: function render() {
+      console.log('this.state.code', this.state.code);
+      return React.createElement(
+        'div',
+        { className: 'centered' },
+        React.createElement(
+          'div',
+          { className: 'pure-g' },
+          React.createElement(
+            'div',
+            { className: 'pure-u-1' },
+            React.createElement(
+              'h1',
+              null,
+              'Game Lobby'
+            )
+          ),
+          React.createElement(
+            'div',
+            { className: 'pure-u-18 -24' },
+            React.createElement(
+              'p',
+              null,
+              'Create a new game to invite a specific friend or let any other player'
+            )
+          ),
+          React.createElement(
+            'div',
+            { className: 'pure-u-4-24' },
+            React.createElement(
+              Link,
+              {
+                to: '/game/new',
+                className: 'pure-button pure-button-primary' },
+              'Just Play'
+            )
+          ),
+          React.createElement(
+            'div',
+            { className: 'pure-u-1' },
+            React.createElement(
+              'label',
+              { htmlFor: 'code' },
+              'Join a game by code'
+            ),
+            React.createElement('input', {
+              id: 'code',
+              type: 'text',
+              value: this.state.code,
+              onChange: function (event) {
+                this.setState({ code: event.target.value });
+              }.bind(this),
+              placeholder: 'Enter unique game code here' }),
+            React.createElement(
+              Link,
+              {
+                to: "/game/play/" + this.state.code,
+                className: 'pure-button pure-button-primary' },
+              'Join'
+            )
+          ),
+          React.createElement(
+            'div',
+            { className: 'pure-u-1' },
+            React.createElement(
+              Link,
+              {
+                to: '/game/watch',
+                className: 'pure-button pure-button-primary' },
+              'Spectate'
+            )
+          )
+        )
+      );
+    }
+  }]);
+
+  return Lobby;
+}(Reflux.Component);
+
+module.exports = Lobby;
+
+/***/ }),
+/* 326 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var React = __webpack_require__(0);
+var Reflux = __webpack_require__(8);
+var ReactDOM = __webpack_require__(5);
+
+var _require = __webpack_require__(7),
+    Switch = _require.Switch,
+    Route = _require.Route,
+    Link = _require.Link;
+
+var classNames = __webpack_require__(10);
+
+var NewGame = function (_Reflux$Component) {
+  _inherits(NewGame, _Reflux$Component);
+
+  function NewGame() {
+    _classCallCheck(this, NewGame);
+
+    return _possibleConstructorReturn(this, (NewGame.__proto__ || Object.getPrototypeOf(NewGame)).apply(this, arguments));
+  }
+
+  _createClass(NewGame, [{
+    key: 'render',
+    value: function render() {
+      return React.createElement(
+        'div',
+        { className: 'centered' },
+        React.createElement(
+          'div',
+          { className: 'pure-g' },
+          React.createElement(
+            'div',
+            { className: 'pure-u-1' },
+            React.createElement(
+              'h1',
+              null,
+              'New Game'
+            ),
+            React.createElement('br', null),
+            React.createElement(
+              'h3',
+              null,
+              'Waiting for player to join your game....'
+            ),
+            React.createElement(
+              'p',
+              null,
+              'TODO: send message over socket to server to either wait for a player to join or'
+            )
+          )
+        )
+      );
+    }
+  }]);
+
+  return NewGame;
+}(Reflux.Component);
+
+module.exports = NewGame;
+
+/***/ }),
+/* 327 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var React = __webpack_require__(0);
+var Reflux = __webpack_require__(8);
+var ReactDOM = __webpack_require__(5);
+
+var _require = __webpack_require__(7),
+    Switch = _require.Switch,
+    Route = _require.Route,
+    Link = _require.Link;
+
+var classNames = __webpack_require__(10);
+
+var Spectate = function (_Reflux$Component) {
+  _inherits(Spectate, _Reflux$Component);
+
+  function Spectate() {
+    _classCallCheck(this, Spectate);
+
+    return _possibleConstructorReturn(this, (Spectate.__proto__ || Object.getPrototypeOf(Spectate)).apply(this, arguments));
+  }
+
+  _createClass(Spectate, [{
+    key: 'render',
+    value: function render() {
+      return React.createElement(
+        'div',
+        { className: 'centered' },
+        React.createElement(
+          'div',
+          { className: 'pure-g' },
+          React.createElement(
+            'div',
+            { className: 'pure-u-1' },
+            React.createElement(
+              'h1',
+              null,
+              'Watch live game'
+            ),
+            React.createElement('br', null),
+            React.createElement(
+              'h3',
+              null,
+              '...'
+            )
+          )
+        )
+      );
+    }
+  }]);
+
+  return Spectate;
+}(Reflux.Component);
+
+module.exports = Spectate;
+
+/***/ }),
+/* 328 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var React = __webpack_require__(0);
+var Reflux = __webpack_require__(8);
+var ReactDOM = __webpack_require__(5);
+
+var _require = __webpack_require__(7),
+    Switch = _require.Switch,
+    Route = _require.Route,
+    Link = _require.Link;
+
+var classNames = __webpack_require__(10);
+
+var Board = __webpack_require__(194);
+var GameStore = __webpack_require__(116);
+
+var GamePage = function (_Reflux$Component) {
+  _inherits(GamePage, _Reflux$Component);
+
+  function GamePage(props) {
+    _classCallCheck(this, GamePage);
+
+    var _this = _possibleConstructorReturn(this, (GamePage.__proto__ || Object.getPrototypeOf(GamePage)).call(this, props));
+
+    _this.state = {}; // our store will add its own state to the component's
+    _this.store = GameStore; // <- just assign the store class itself
+    return _this;
+  }
+
+  _createClass(GamePage, [{
+    key: 'render',
+    value: function render() {
+      return React.createElement(
+        'div',
+        { className: 'centered' },
+        React.createElement(
+          'div',
+          { className: 'pure-g' },
+          React.createElement(
+            'div',
+            { className: 'pure-u-1' },
+            React.createElement(
+              'h1',
+              null,
+              'Game View'
+            )
+          ),
+          React.createElement(
+            'div',
+            { className: 'pure-u-1' },
+            React.createElement(Board, this.state)
+          )
+        )
+      );
+    }
+  }]);
+
+  return GamePage;
+}(Reflux.Component);
+
+module.exports = GamePage;
 
 /***/ })
 /******/ ]);

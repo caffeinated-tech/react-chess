@@ -48,7 +48,6 @@ if (typeof window !== 'undefined') {
 
     // private methods (not really private, but using the convention to prefix
     //  methods with an underscore to mark them as private )
-
     _handleIncomingMessage(event) {
       console.log(event)
       console.log("from socket");
