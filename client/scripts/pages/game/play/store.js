@@ -4,12 +4,14 @@ const { Switch, Route, Link } = require('react-router-dom');
 const classNames = require('classnames')
 
 const Game = require('./data/game.js')
+const RemoteGame = require('./data/remote_game.js')
 const Actions = require('./actions.js')
 
 class PlayStore extends Reflux.Store {
   constructor() {
     super();
     this.game = new Game();
+    this.userId = null;
     this.state = {
       board: this.game.board
     };
@@ -19,11 +21,18 @@ class PlayStore extends Reflux.Store {
   }
 
   initializeState(props) {
-    console.log('TODO: init state in game store')
+    this.userId = props.user.id;
   }
 
   setupGame(gameData) {
     console.log('gameData', gameData);
+    this.game = new RemoteGame(gameData, this.userId);
+    this.setState({board: this.game.board});
+  }
+
+  moveMade(moveData){
+    this.game.applyMove(moveData);
+    this.setState({board: this.game.board});
   }
 
   // action callbacks

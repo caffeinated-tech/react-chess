@@ -6900,6 +6900,7 @@ var _require = __webpack_require__(4),
 var classNames = __webpack_require__(8);
 
 var Game = __webpack_require__(315);
+var RemoteGame = __webpack_require__(332);
 var Actions = __webpack_require__(40);
 
 var PlayStore = function (_Reflux$Store) {
@@ -6911,6 +6912,7 @@ var PlayStore = function (_Reflux$Store) {
     var _this = _possibleConstructorReturn(this, (PlayStore.__proto__ || Object.getPrototypeOf(PlayStore)).call(this));
 
     _this.game = new Game();
+    _this.userId = null;
     _this.state = {
       board: _this.game.board
     };
@@ -6922,12 +6924,20 @@ var PlayStore = function (_Reflux$Store) {
   _createClass(PlayStore, [{
     key: 'initializeState',
     value: function initializeState(props) {
-      console.log('TODO: init state in game store');
+      this.userId = props.user.id;
     }
   }, {
     key: 'setupGame',
     value: function setupGame(gameData) {
       console.log('gameData', gameData);
+      this.game = new RemoteGame(gameData, this.userId);
+      this.setState({ board: this.game.board });
+    }
+  }, {
+    key: 'moveMade',
+    value: function moveMade(moveData) {
+      this.game.applyMove(moveData);
+      this.setState({ board: this.game.board });
     }
 
     // action callbacks
@@ -27876,6 +27886,11 @@ if (typeof window !== 'undefined') {
 
         this._sendJSON('join_game', { id: id });
       }
+    }, {
+      key: 'makeMove',
+      value: function makeMove(move) {
+        this._sendJSON('make_move', move);
+      }
 
       // private methods (not really private, but using the convention to prefix
       //  methods with an underscore to mark them as private )
@@ -27893,8 +27908,10 @@ if (typeof window !== 'undefined') {
             this._updateStatistics(data.payload);
             break;
           case 'joined_game':
-            console.log('got a game to join!');
             this._joinedGame(data.payload);
+            break;
+          case 'made_move':
+            this._madeMove(data.payload);
             break;
         }
       }
@@ -27914,6 +27931,13 @@ if (typeof window !== 'undefined') {
         // TODO: change route
         RouterHistory.push('/game/play/' + payload.id);
         // TODO: show some sort of toast / popup
+      }
+    }, {
+      key: '_madeMove',
+      value: function _madeMove(payload) {
+        // TODO: this should be an action, as should be all communication from
+        //  sockets to stores
+        PlayStore.moveMade(payload);
       }
     }, {
       key: '_openSocket',
@@ -37888,7 +37912,7 @@ var Square = function (_React$Component) {
             lastMove: this.props.lastMove,
             isOver: isOver
           }) },
-        React.createElement(Piece, this.props.piece)
+        this.props.piece != null && React.createElement(Piece, this.props.piece)
       ));
     }
   }, {
@@ -37996,23 +38020,45 @@ var Square = __webpack_require__(322);
 // containing 8 squares. The squares can contain pieces and other metadata
 
 var Game = function () {
-  function Game() {
+  function Game(moves) {
     _classCallCheck(this, Game);
 
     // setup board & pieces
     this.board = [];
     this._setupEmptyBoard();
+    this.moves = [];
     this._setupPieces();
     // some metadata for handling moves
     this.selectedSquare = null;
+    this.turn = 'white';
+    this._replayMoves(moves);
+    // TODO: replay moves to get to current game state
   }
 
-  // select a square for a drag start event
+  // in a default local game, both players make the moves in this view
 
 
   _createClass(Game, [{
+    key: '_myTurn',
+    value: function _myTurn() {
+      return true;
+    }
+
+    // in a default local game, no need to record moves
+
+  }, {
+    key: '_recordMove',
+    value: function _recordMove() {}
+
+    // select a square for a drag start event
+
+  }, {
     key: 'selectSquare',
     value: function selectSquare(row, column) {
+      if (!this._myTurn()) {
+        return this.board;
+      }
+
       this.clearHighlightedSquares();
       var targetSquare = this.board[row][column];
       this.selectedSquare = targetSquare;
@@ -38031,19 +38077,16 @@ var Game = function () {
     value: function clickSquare(row, column) {
       var targetSquare = this.board[row][column];
 
-      if (this.selectedSquare == null && targetSquare.piece == null) {}if (this.selectedSquare == null) {
-        // TODO: check if its my piece I clicked on
-
-        // mark piece and square as selected
-        targetSquare.selected = true;
-        this.selectedSquare = targetSquare;
-        // calculate and mark valid squares this piece can  move to
-        var moves = targetSquare.piece.getValidMoves(this.board);
-        moves.forEach(function (coordinates) {
-          this.board[coordinates[0]][coordinates[1]].validMove = true;
-        }, this);
+      if (this.selectedSquare == null && targetSquare.piece == null) {
+        // Do nothing, as the square is empty and no piece was selected
+      } else if (this.selectedSquare == null) {
+        if (targetSquare.piece.color == this.turn) {
+          this.selectSquare(row, column);
+        }
       } else if (targetSquare.validMove) {
-        // move the piece (TODO: move to square?)
+        // record move before it is completed, so we know what piece, if any, was 
+        //  taken
+        this._recordMove(this.selectedSquare, targetSquare);
         targetSquare.movePieceHere(this.selectedSquare.piece);
         // this should clear the piece away from the square as it's a reference to the
         // 	same object in the board
@@ -38125,6 +38168,35 @@ var Game = function () {
       this.board[7][5].setPiece(new Bishop('white'));
       this.board[7][6].setPiece(new Knight('white'));
       this.board[7][7].setPiece(new Rook('white'));
+    }
+  }, {
+    key: '_replayMoves',
+    value: function _replayMoves(moves) {
+      if (moves == null) {
+        return;
+      }
+      moves.forEach(function (move) {
+        this.applyMove(move);
+      }.bind(this));
+      console.log('it\'s ' + this.turn + ' turn');
+    }
+  }, {
+    key: 'applyMove',
+    value: function applyMove(move) {
+      console.log('apply Move', move);
+      // find the squares
+      var fromSquare = this.board[move.fromRow][move.fromColumn];
+      var toSquare = this.board[move.toRow][move.toColumn];
+      // make the move
+      toSquare.movePieceHere(fromSquare.piece);
+      fromSquare.piece = null;
+      // some display stuff
+      this.clearHighlightedSquares();
+      toSquare.lastMove = true;
+      // add move to history
+      this.moves.push(move);
+      this.turn = this.moves.length % 2 == 0 ? 'white' : 'black';
+      // todo need to handle special moves here
     }
   }, {
     key: '_createRow',
@@ -39391,6 +39463,85 @@ var PlayerStats = function (_Reflux$Component) {
 }(Reflux.Component);
 
 module.exports = PlayerStats;
+
+/***/ }),
+/* 332 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Game = __webpack_require__(315);
+
+var RemoteGame = function (_Game) {
+  _inherits(RemoteGame, _Game);
+
+  function RemoteGame(gameData, userId) {
+    _classCallCheck(this, RemoteGame);
+
+    console.log('creating a new game', gameData, userId);
+    // the base game is built up by 
+
+    // me could be null (for guests) or not even a player (if a user who is 
+    //  spectating)
+    var _this = _possibleConstructorReturn(this, (RemoteGame.__proto__ || Object.getPrototypeOf(RemoteGame)).call(this, gameData.moves));
+
+    _this.me = userId;
+    _this.white = gameData.white;
+    _this.black = gameData.black;
+    _this.winner = gameData.winner;
+    _this.over = gameData.over;
+    _this.turn = _this.moves.length % 2 == 0 ? 'white' : 'black';
+    console.log('setup the game', _this);
+    return _this;
+  }
+
+  _createClass(RemoteGame, [{
+    key: '_myTurn',
+    value: function _myTurn() {
+      console.log('is it my turn??');
+      console.log('this.me', this.me);
+      console.log('this.turn', this.turn);
+      console.log('this[this.turn]', this[this.turn]);
+      return this.me == this[this.turn];
+    }
+  }, {
+    key: '_recordMove',
+    value: function _recordMove(from, to) {
+      console.log('TODO: record move to send to other player', this.me, from, to);
+      var move = {
+        from: {
+          column: from.column,
+          row: from.row,
+          piece: from.piece.type,
+          color: from.piece.color
+        },
+        to: {
+          column: to.column,
+          row: to.row,
+          piece: to.piece && to.piece.type,
+          color: to.piece && to.piece.color
+        }
+      };
+
+      this.moves.push(move);
+      window.socket.makeMove(move);
+      this.turn = this.moves.length % 2 == 0 ? 'white' : 'black';
+    }
+  }]);
+
+  return RemoteGame;
+}(Game);
+
+module.exports = RemoteGame;
 
 /***/ })
 /******/ ]);

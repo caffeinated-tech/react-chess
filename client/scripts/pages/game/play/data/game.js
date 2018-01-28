@@ -9,17 +9,34 @@ const Square = require('./square.js');
 // The chess board will be represented as an array of 8 rows (arrays), each
 // containing 8 squares. The squares can contain pieces and other metadata
 class Game {
-  constructor() {
+  constructor(moves) {
   	// setup board & pieces
     this.board = [];
     this._setupEmptyBoard();
+    this.moves = [];
     this._setupPieces();
     // some metadata for handling moves
     this.selectedSquare = null
+    this.turn = 'white';
+    this._replayMoves(moves);
+    // TODO: replay moves to get to current game state
+  }
+
+  // in a default local game, both players make the moves in this view
+  _myTurn(){
+    return true;
+  }
+
+  // in a default local game, no need to record moves
+  _recordMove(){
   }
 
   // select a square for a drag start event
   selectSquare(row, column){
+    if (!this._myTurn()){
+      return this.board;
+    }
+
     this.clearHighlightedSquares();
     let targetSquare = this.board[row][column];
     this.selectedSquare = targetSquare;
@@ -34,24 +51,18 @@ class Game {
   // interacting with the game
   clickSquare(row, column){
   	let targetSquare = this.board[row][column];
-
+    
 		if(this.selectedSquare == null && targetSquare.piece == null){
-
-		} if(this.selectedSquare == null){
-			// TODO: check if its my piece I clicked on
-
-			// mark piece and square as selected
-			targetSquare.selected = true;
-			this.selectedSquare = targetSquare;
-			// calculate and mark valid squares this piece can  move to
-			let moves = targetSquare.piece.getValidMoves(this.board);
-			moves.forEach(function(coordinates){
-				this.board[coordinates[0]][coordinates[1]].validMove = true;
-			}, this);
-
+      // Do nothing, as the square is empty and no piece was selected
+		} else if(this.selectedSquare == null){
+      if(targetSquare.piece.color == this.turn){
+  			this.selectSquare(row, column);
+      }
 		} else if(targetSquare.validMove){
-			// move the piece (TODO: move to square?)
-			targetSquare.movePieceHere(this.selectedSquare.piece);
+      // record move before it is completed, so we know what piece, if any, was 
+      //  taken
+      this._recordMove(this.selectedSquare, targetSquare);
+      targetSquare.movePieceHere(this.selectedSquare.piece);
 			// this should clear the piece away from the square as it's a reference to the
 			// 	same object in the board
 			this.selectedSquare.piece = null;
@@ -128,6 +139,33 @@ class Game {
     this.board[7][5].setPiece(new Bishop('white'));
     this.board[7][6].setPiece(new Knight('white'));
     this.board[7][7].setPiece(new Rook('white'));
+  }
+
+  _replayMoves(moves){
+    if(moves == null){
+      return
+    }
+    moves.forEach(function(move){
+      this.applyMove(move);
+    }.bind(this));
+    console.log('it\'s ' + this.turn + ' turn' );
+  }
+
+  applyMove(move){
+    console.log('apply Move', move);
+    // find the squares
+    let fromSquare = this.board[move.fromRow][move.fromColumn];
+    let toSquare = this.board[move.toRow][move.toColumn];
+    // make the move
+    toSquare.movePieceHere(fromSquare.piece);
+    fromSquare.piece = null;
+    // some display stuff
+    this.clearHighlightedSquares();
+    toSquare.lastMove = true;
+    // add move to history
+    this.moves.push(move);
+    this.turn = this.moves.length % 2 == 0 ? 'white' : 'black';
+    // todo need to handle special moves here
   }
 
   _createRow(row){

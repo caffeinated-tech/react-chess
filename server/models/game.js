@@ -16,18 +16,18 @@ const Game = Database.define('Game', {
 Game.belongsTo(User, {as: 'white'});
 Game.belongsTo(User, {as: 'black'});
 
-// each game has many moves
-Game.hasMany(Move);
-
 // serialize the game into an object whjch can be sent to the client for 
 //  displaying game info
 Game.prototype.serialize = function () {
+  console.log(this);
   return {
     id: this.id,
     winner: this.winner,
     over: this.over,
-    black: this.black && this.black.id,
-    white: this.white && this.white.id
+    black: this.blackId,
+    white: this.whiteId,
+    moves: (this.moves && this.moves.map(function(move){
+      return move.serialize();}) ) || []
   };
 };
 

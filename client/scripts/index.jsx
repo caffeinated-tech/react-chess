@@ -50,6 +50,10 @@ if (typeof window !== 'undefined') {
       this._sendJSON('join_game', { id: id });
     }
 
+    makeMove(move){
+      this._sendJSON('make_move', move);
+    }
+
     // private methods (not really private, but using the convention to prefix
     //  methods with an underscore to mark them as private )
     _handleIncomingMessage(event) {
@@ -63,8 +67,10 @@ if (typeof window !== 'undefined') {
           this._updateStatistics(data.payload);
           break;
         case 'joined_game':
-          console.log('got a game to join!',)
           this._joinedGame(data.payload);
+          break;
+        case 'made_move':
+          this._madeMove(data.payload);
           break;
       }
     }
@@ -82,6 +88,11 @@ if (typeof window !== 'undefined') {
       // TODO: change route
       RouterHistory.push('/game/play/' + payload.id);
       // TODO: show some sort of toast / popup
+    }
+    _madeMove(payload){
+      // TODO: this should be an action, as should be all communication from
+      //  sockets to stores
+      PlayStore.moveMade(payload);
     }
 
     _openSocket(){

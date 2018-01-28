@@ -36,7 +36,10 @@ class Square extends React.Component {
           lastMove: this.props.lastMove,
           isOver: isOver
         })}>
-        <Piece {...this.props.piece}/>
+      {/*only render a piece if it's present, to prevent invalid drag events on empty squares*/}
+        { (this.props.piece != null) &&
+          <Piece {...this.props.piece}/>
+        }
       </div>
     );
   }
