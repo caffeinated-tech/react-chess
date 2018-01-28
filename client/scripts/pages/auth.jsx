@@ -26,6 +26,11 @@ class AuthPage extends Reflux.Component {
             : <LoggedInHeader {...this.state}/>
           }
           <Switch>
+            {/* 
+              need to use the render prop instead of component so the state 
+              from the auth store can be passed down to the various login 
+              sub-pages
+            */}
             <Route path="/auth/login" render={ () => (
               <LoginForm {...this.state}/>
             )}/>

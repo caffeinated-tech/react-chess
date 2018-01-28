@@ -3,15 +3,11 @@
 var bcrypt   = require('bcrypt');
 const Sequelize = require('sequelize');
 
-const User = Database.define('User', {  
-  id: {
-    type: Sequelize.INTEGER,
-    autoIncrement: true,
-    primaryKey: true
-  },
+const User = Database.define('User', {
   username: Sequelize.STRING,
   password: Sequelize.STRING,
-  email: Sequelize.STRING
+  email: Sequelize.STRING,
+  activeGameId: Sequelize.INTEGER
 });
 
 // 

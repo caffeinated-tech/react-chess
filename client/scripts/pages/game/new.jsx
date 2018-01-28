@@ -4,7 +4,14 @@ const ReactDOM = require('react-dom');
 const { Switch, Route, Link } = require('react-router-dom');
 const classNames = require('classnames');
 
+const PlayerStats = require('../../common/stats/players.jsx')
+
 class NewGame extends Reflux.Component {
+
+  componentDidMount(){
+    console.log('check in with server for a game to play');
+    window && window.socket.joinGame();
+  }
 
   render() {
     return (
@@ -12,16 +19,14 @@ class NewGame extends Reflux.Component {
         <div className="pure-g">
           <div className="pure-u-1">
             <h1>
-              New Game
+              Starting New Game
             </h1>
-            <br/>
-            <h3>
-              Waiting for player to join your game....
-            </h3>
             <p>
-              TODO: send message over socket to server to either wait for a player
-              to join or 
+              Waiting for player to join your game....
             </p>
+          </div>
+          <div className="centered">
+            <PlayerStats/>
           </div>
         </div>
       </div>

@@ -16,6 +16,8 @@ Database
 
 // load models
 global.User = require('../models/user.js');
+global.Game = require('../models/game.js');
+global.Move = require('../models/move.js');
 
 Database.sync()
   .then(function(err) {

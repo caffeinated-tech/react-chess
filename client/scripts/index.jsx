@@ -13,7 +13,9 @@ const Game = require('./pages/game.jsx')
 
 // Data stores
 const AuthStore = require('./pages/auth/store.js')
-const GameStore = require('./pages/game/store.js')
+const PlayStore = require('./pages/game/play/store.js')
+const LobbyStore = require('./pages/game/lobby/store.js')
+const StatsStore = require('./common/stats/store.js')
 
 // 404 page not found page
 // TODO: move to separate page, add some useful links?
@@ -27,7 +29,6 @@ class NoMatch extends React.Component {
    }
 }
 
-
 // TODO: need some sort of communication class / store for managing interaction 
 //  with the server. It needs to be global is it will be used in many places, 
 //  and I want logged in users and guests to have a session for viewing games 
@@ -40,10 +41,13 @@ if (typeof window !== 'undefined') {
       this.socket = this._openSocket()
     }
 
-
     restartSocket(){
       this.socket.close();
       this.socket = this._openSocket()
+    }
+
+    joinGame(id = null){
+      this._sendJSON('join_game', { id: id });
     }
 
     // private methods (not really private, but using the convention to prefix
@@ -52,7 +56,32 @@ if (typeof window !== 'undefined') {
       console.log(event)
       console.log("from socket");
       console.log("raw",event.data);
-      console.log("parsed", JSON.parse(event.data));
+      let data = JSON.parse(event.data);
+      console.log("parsed", data);
+      switch(data.type){
+        case 'statistics':
+          this._updateStatistics(data.payload);
+          break;
+        case 'joined_game':
+          console.log('got a game to join!',)
+          this._joinedGame(data.payload);
+          break;
+      }
+    }
+
+    _updateStatistics(payload) {
+      console.log('statistics', payload);
+      // TODO: pass stats to stores
+      StatsStore.updateStatistics(payload);
+    }
+
+    _joinedGame(payload){
+      console.log('join the game');
+      // TODO: update game & play store
+      PlayStore.setupGame(payload);
+      // TODO: change route
+      RouterHistory.push('/game/play/' + payload.id);
+      // TODO: show some sort of toast / popup
     }
 
     _openSocket(){
@@ -63,8 +92,15 @@ if (typeof window !== 'undefined') {
         // TODO: do we need to send / receive any info here?
       };
 
-      socket.onmessage = this._handleIncomingMessage
+      socket.onmessage = this._handleIncomingMessage.bind(this);
       return socket;
+    }
+
+    _sendJSON(type, payload){
+      this.socket.send(JSON.stringify({
+        type: type,
+        payload: payload
+      }))
     }
   }
   
@@ -80,7 +116,8 @@ class App extends React.Component {
   constructor(props){
     super(props);
     AuthStore.initializeState(props);
-    GameStore.initializeState(props);
+    PlayStore.initializeState(props);
+    LobbyStore.initializeState(props);
   }
 
   render() {

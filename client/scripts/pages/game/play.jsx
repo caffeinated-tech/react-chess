@@ -4,8 +4,8 @@ const ReactDOM = require('react-dom');
 const { Switch, Route, Link } = require('react-router-dom');
 const classNames = require('classnames');
 
-const Board = require('./board.jsx');
-const GameStore = require('./store.js');
+const Board = require('./play/board.jsx');
+const GameStore = require('./play/store.js');
 
 class GamePage extends Reflux.Component {
   constructor(props){

@@ -6,7 +6,7 @@ const classNames = require('classnames')
 const Game = require('./data/game.js')
 const Actions = require('./actions.js')
 
-class GameStore extends Reflux.Store {
+class PlayStore extends Reflux.Store {
   constructor() {
     super();
     this.game = new Game();
@@ -18,11 +18,13 @@ class GameStore extends Reflux.Store {
     this.listenToMany(Actions);
   }
 
-
   initializeState(props) {
     console.log('TODO: init state in game store')
   }
 
+  setupGame(gameData) {
+    console.log('gameData', gameData);
+  }
 
   // action callbacks
 
@@ -49,4 +51,4 @@ class GameStore extends Reflux.Store {
 
 
 }
-module.exports = Reflux.initStore(GameStore);
+module.exports = Reflux.initStore(PlayStore);

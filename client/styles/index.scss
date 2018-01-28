@@ -88,6 +88,16 @@ header {
   }
 }
 
+// stats
+.stats {
+  border: 2px solid white;
+  padding: 1em;
+  border-radius:10px;
+  h4{
+    text-align: left;
+  }
+}
+
 // board page
 
 .board {

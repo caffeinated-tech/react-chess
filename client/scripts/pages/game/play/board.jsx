@@ -18,10 +18,13 @@ class Board extends React.Component {
     return (
       <div className="board">
         {this.props.board.map(function(row, rowIndex){
-          return <div className="row">
+          return <div className="row" key={rowIndex}>
             {row.map(function(square, columnIndex){
               return (
-                <Square {...square} row={rowIndex} column={columnIndex}/>
+                <Square {...square} 
+                  row={rowIndex} 
+                  column={columnIndex} 
+                  key={columnIndex}/>
               );
             }, this)}
           </div>

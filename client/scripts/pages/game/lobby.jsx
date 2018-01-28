@@ -4,16 +4,18 @@ const ReactDOM = require('react-dom');
 const { Switch, Route, Link } = require('react-router-dom');
 const classNames = require('classnames');
 
+const LobbyStore = require('./lobby/store.js');
+
 class Lobby extends Reflux.Component {
   constructor(props){
     super(props);
-    this.state = {
-      code: ''
-    }
+    this.state = {}; // our store will add its own state to the component's
+    this.store = LobbyStore; // <- just assign the store class itself
   }
 
   render() {
     console.log('this.state.code', this.state.code);
+    console.log('this.props', this.props);
     return (
       <div className="centered">
         <div className="pure-g">
