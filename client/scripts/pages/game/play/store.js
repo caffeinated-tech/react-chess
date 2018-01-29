@@ -12,9 +12,7 @@ class PlayStore extends Reflux.Store {
     super();
     this.game = new Game();
     this.userId = null;
-    this.state = {
-      board: this.game.board
-    };
+    this.state = this.game;
     this.selectedPiece = null;
     this.validMoves =
     this.listenToMany(Actions);
@@ -31,20 +29,18 @@ class PlayStore extends Reflux.Store {
 
   onClickSquare(row, column, piece){
     console.log('click in store',row,column,piece);
-    let newBoard = this.game.clickSquare(row, column);
-    this.setState({board: newBoard});
+    this.game.clickSquare(row, column);
+    this.setState(this.game);
   }
 
   onDragPiece(row, column){
     console.log('drag from',row,column);
-    let newBoard = this.game.selectSquare(row, column);
-    this.setState({board: newBoard});
+    this.game.selectSquare(row, column);
   }
 
   onDropOnSquare(row, column){
     console.log('drop in store',row,column);
-    let newBoard = this.game.clickSquare(row, column);
-    this.setState({board: newBoard});
+    this.game.clickSquare(row, column);    this.setState(this.game);
   }
 
   //////////////////////////////////////////////////////////////////////////////
@@ -53,12 +49,12 @@ class PlayStore extends Reflux.Store {
 
   onSetupGame(gameData) {
     this.game = new RemoteGame(gameData, this.userId);
-    this.setState({board: this.game.board});
+    this.setState(this.game);
   }
 
   onMoveMade(moveData){
     this.game.applyMove(moveData);
-    this.setState({board: this.game.board});
+    this.setState(this.game);
   }
 }
 

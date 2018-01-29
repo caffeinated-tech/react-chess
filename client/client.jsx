@@ -11,6 +11,9 @@ const App = require('./scripts/index.jsx');
 // global history object for changing routes
 window.RouterHistory = createHistory();
 
+// provide more symantic way of checking if client or server side render
+window.browser = true;
+
 // styling can only be loaded in the client version as the webpacker loaders
 //  related to stylesheets require browser context
 require('./styles/index.scss');

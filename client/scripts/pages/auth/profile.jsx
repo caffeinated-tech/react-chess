@@ -14,7 +14,6 @@ class ProfilePage extends Reflux.Component {
   }
 
   render() {
-    console.log(this.props)
     return (
       <form className="pure-form pure-form-aligned">
         <fieldset>

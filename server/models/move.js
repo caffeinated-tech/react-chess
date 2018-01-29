@@ -22,7 +22,6 @@ const Move = Database.define('Move', {
 
 // serialize the move into an object which can be sent to the client
 Move.prototype.serialize = function () {
-  console.log(this);
   return {
     userId: this.userId,
     gameId: this.gameId,

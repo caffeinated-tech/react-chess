@@ -2,6 +2,8 @@ const React = require('react');
 const ReactDOM = require('react-dom');
 const App = require('./scripts/index.jsx');
 
+global.browser = false;
+
 class ServerPage extends React.Component {
   render() {
     return (

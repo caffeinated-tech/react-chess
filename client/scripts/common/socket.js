@@ -39,6 +39,10 @@ if (typeof window !== 'undefined') {
       this._sendJSON('make_move', move);
     }
 
+    forfeitGame(){
+      this._sendJSON('forfeit_game', {}); 
+    }
+
     ////////////////////////////////////////////////////////////////////////////
     // private methods (not really private, but using the convention to prefix
     //  methods with an underscore to mark them as private )
@@ -59,6 +63,9 @@ if (typeof window !== 'undefined') {
         case 'made_move':
           this._madeMove(data.payload);
           break;
+        case 'game_over':
+          this._gameOver(data.payload);
+          break;
       }
     }
 
@@ -73,8 +80,17 @@ if (typeof window !== 'undefined') {
       RouterHistory.push('/game/play/' + payload.id);
       // TODO: show some sort of toast / popup
     }
+
     _madeMove(payload){
       PlayActions.moveMade(payload);
+    }
+
+    _gameOver(payload){
+      RouterHistory.push('/game/lobby');
+      // TODO: inform the players who won
+      // TODO: clear the game object from the play store
+      // Todo: prevent the user from accessing the play view when no game is 
+      //  there
     }
 
     _openSocket(){

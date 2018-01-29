@@ -6970,9 +6970,7 @@ var PlayStore = function (_Reflux$Store) {
 
     _this.game = new Game();
     _this.userId = null;
-    _this.state = {
-      board: _this.game.board
-    };
+    _this.state = _this.game;
     _this.selectedPiece = null;
     _this.validMoves = _this.listenToMany(Actions);
     return _this;
@@ -6993,22 +6991,20 @@ var PlayStore = function (_Reflux$Store) {
     key: 'onClickSquare',
     value: function onClickSquare(row, column, piece) {
       console.log('click in store', row, column, piece);
-      var newBoard = this.game.clickSquare(row, column);
-      this.setState({ board: newBoard });
+      this.game.clickSquare(row, column);
+      this.setState(this.game);
     }
   }, {
     key: 'onDragPiece',
     value: function onDragPiece(row, column) {
       console.log('drag from', row, column);
-      var newBoard = this.game.selectSquare(row, column);
-      this.setState({ board: newBoard });
+      this.game.selectSquare(row, column);
     }
   }, {
     key: 'onDropOnSquare',
     value: function onDropOnSquare(row, column) {
       console.log('drop in store', row, column);
-      var newBoard = this.game.clickSquare(row, column);
-      this.setState({ board: newBoard });
+      this.game.clickSquare(row, column);this.setState(this.game);
     }
 
     //////////////////////////////////////////////////////////////////////////////
@@ -7019,13 +7015,13 @@ var PlayStore = function (_Reflux$Store) {
     key: 'onSetupGame',
     value: function onSetupGame(gameData) {
       this.game = new RemoteGame(gameData, this.userId);
-      this.setState({ board: this.game.board });
+      this.setState(this.game);
     }
   }, {
     key: 'onMoveMade',
     value: function onMoveMade(moveData) {
       this.game.applyMove(moveData);
-      this.setState({ board: this.game.board });
+      this.setState(this.game);
     }
   }]);
 
@@ -30818,7 +30814,6 @@ var ProfilePage = function (_Reflux$Component) {
   _createClass(ProfilePage, [{
     key: 'render',
     value: function render() {
-      console.log(this.props);
       return React.createElement(
         'form',
         { className: 'pure-form pure-form-aligned' },
@@ -31235,8 +31230,7 @@ var NewGame = function (_Reflux$Component) {
   _createClass(NewGame, [{
     key: 'componentDidMount',
     value: function componentDidMount() {
-      console.log('check in with server for a game to play');
-      window && window.socket.joinGame();
+      browser && socket.joinGame();
     }
   }, {
     key: 'render',
@@ -31473,6 +31467,7 @@ var _require = __webpack_require__(4),
 var classNames = __webpack_require__(8);
 
 var Board = __webpack_require__(202);
+var Dashboard = __webpack_require__(336);
 var GameStore = __webpack_require__(118);
 
 var GamePage = function (_Reflux$Component) {
@@ -31499,16 +31494,12 @@ var GamePage = function (_Reflux$Component) {
           { className: 'pure-g' },
           React.createElement(
             'div',
-            { className: 'pure-u-1' },
-            React.createElement(
-              'h1',
-              null,
-              'Game View'
-            )
+            { className: 'pure-u-1 pure-u-lg-12-24' },
+            React.createElement(Dashboard, this.state)
           ),
           React.createElement(
             'div',
-            { className: 'pure-u-1' },
+            { className: 'pure-u-1 pure-u-lg-12-24' },
             React.createElement(Board, this.state)
           )
         )
@@ -38779,6 +38770,8 @@ var React = __webpack_require__(0);
 var ReactDOM = __webpack_require__(2);
 var App = __webpack_require__(157);
 
+global.browser = false;
+
 var ServerPage = function (_React$Component) {
   _inherits(ServerPage, _React$Component);
 
@@ -38912,6 +38905,11 @@ if (typeof window !== 'undefined') {
       value: function makeMove(move) {
         this._sendJSON('make_move', move);
       }
+    }, {
+      key: 'forfeitGame',
+      value: function forfeitGame() {
+        this._sendJSON('forfeit_game', {});
+      }
 
       ////////////////////////////////////////////////////////////////////////////
       // private methods (not really private, but using the convention to prefix
@@ -38936,6 +38934,9 @@ if (typeof window !== 'undefined') {
           case 'made_move':
             this._madeMove(data.payload);
             break;
+          case 'game_over':
+            this._gameOver(data.payload);
+            break;
         }
       }
 
@@ -38958,6 +38959,15 @@ if (typeof window !== 'undefined') {
       key: '_madeMove',
       value: function _madeMove(payload) {
         PlayActions.moveMade(payload);
+      }
+    }, {
+      key: '_gameOver',
+      value: function _gameOver(payload) {
+        RouterHistory.push('/game/lobby');
+        // TODO: inform the players who won
+        // TODO: clear the game object from the play store
+        // Todo: prevent the user from accessing the play view when no game is 
+        //  there
       }
     }, {
       key: '_openSocket',
@@ -39032,6 +39042,70 @@ var PageNoteFound = function (_React$Component) {
 }(React.Component);
 
 module.exports = PageNoteFound;
+
+/***/ }),
+/* 336 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var React = __webpack_require__(0);
+var ReactDOM = __webpack_require__(2);
+var classNames = __webpack_require__(8);
+
+var Dashboard = function (_React$Component) {
+  _inherits(Dashboard, _React$Component);
+
+  function Dashboard(props) {
+    _classCallCheck(this, Dashboard);
+
+    return _possibleConstructorReturn(this, (Dashboard.__proto__ || Object.getPrototypeOf(Dashboard)).call(this, props));
+  }
+
+  _createClass(Dashboard, [{
+    key: 'render',
+    value: function render() {
+      return React.createElement(
+        'div',
+        { className: 'centered' },
+        React.createElement(
+          'h3',
+          null,
+          'Current turn:'
+        ),
+        React.createElement(
+          'p',
+          null,
+          this.props.turn,
+          this.props[this.props.turn] == this.props.me ? "(you)" : "(the enemy)"
+        ),
+        React.createElement(
+          'button',
+          {
+            type: 'button',
+            onClick: function onClick() {
+              socket.forfeitGame();
+            },
+            className: 'pure-button pure-button-primary' },
+          'Forfeit'
+        )
+      );
+    }
+  }]);
+
+  return Dashboard;
+}(React.Component);
+
+module.exports = Dashboard;
 
 /***/ })
 /******/ ]);

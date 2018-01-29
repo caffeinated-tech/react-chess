@@ -5,6 +5,7 @@ const { Switch, Route, Link } = require('react-router-dom');
 const classNames = require('classnames');
 
 const Board = require('./play/board.jsx');
+const Dashboard = require('./play/dashboard.jsx');
 const GameStore = require('./play/store.js');
 
 class GamePage extends Reflux.Component {
@@ -18,12 +19,10 @@ class GamePage extends Reflux.Component {
     return (
       <div className="centered">
         <div className="pure-g">
-          <div className="pure-u-1">
-            <h1>
-              Game View
-            </h1>
+          <div className="pure-u-1 pure-u-lg-12-24">
+            <Dashboard {...this.state}/>
           </div>
-          <div className="pure-u-1">
+          <div className="pure-u-1 pure-u-lg-12-24">
             <Board {...this.state}/>
           </div>
         </div>

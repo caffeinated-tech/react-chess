@@ -9,8 +9,7 @@ const PlayerStats = require('../../common/stats/players.jsx')
 class NewGame extends Reflux.Component {
 
   componentDidMount(){
-    console.log('check in with server for a game to play');
-    window && window.socket.joinGame();
+    browser && socket.joinGame();
   }
 
   render() {

@@ -29,6 +29,7 @@ global.OpenSockets = {};
 
 let joinGame = require('./game/join_game.js');
 let makeMove = require('./game/make_move.js');
+let forfeitGame = require('./game/forfeit_game.js');
 
 
 module.exports = function(server, sessionParser){
@@ -88,6 +89,8 @@ module.exports = function(server, sessionParser){
         case 'make_move':
           makeMove(socket.user, data.payload);
           break;
+        case 'forfeit_game':
+          forfeitGame(socket.user, data.payload);
         default:
       }
     });
