@@ -21,21 +21,13 @@ class PlayStore extends Reflux.Store {
   }
 
   initializeState(props) {
-    this.userId = props.user.id;
+    // set user id if user is present
+    this.userId = props.user && props.user.id;
   }
 
-  setupGame(gameData) {
-    console.log('gameData', gameData);
-    this.game = new RemoteGame(gameData, this.userId);
-    this.setState({board: this.game.board});
-  }
-
-  moveMade(moveData){
-    this.game.applyMove(moveData);
-    this.setState({board: this.game.board});
-  }
-
+  //////////////////////////////////////////////////////////////////////////////
   // action callbacks
+  //////////////////////////////////////////////////////////////////////////////
 
   onClickSquare(row, column, piece){
     console.log('click in store',row,column,piece);
@@ -55,9 +47,20 @@ class PlayStore extends Reflux.Store {
     this.setState({board: newBoard});
   }
 
-  // private methods
+  //////////////////////////////////////////////////////////////////////////////
+  // action callbacks from socket events
+  //////////////////////////////////////////////////////////////////////////////
 
+  onSetupGame(gameData) {
+    this.game = new RemoteGame(gameData, this.userId);
+    this.setState({board: this.game.board});
+  }
 
-
+  onMoveMade(moveData){
+    this.game.applyMove(moveData);
+    this.setState({board: this.game.board});
+  }
 }
+
+
 module.exports = Reflux.initStore(PlayStore);

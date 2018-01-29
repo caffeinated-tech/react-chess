@@ -7,7 +7,8 @@ const Statistics = {
   }
 }
 
-// saving connections to active users by user ids
+// top level object to hold sockets, games and users by user id for quick lookup
+//  and broadcasts
 const Connections = {
 
 };
@@ -21,7 +22,6 @@ const WebSocket = require('ws');
 
 
 function joinGame(user, payload){
-  console.log('joinGame', user, payload);
   // only logged in users can play
   if( user === null){
     return;
@@ -32,21 +32,15 @@ function joinGame(user, payload){
   if( gameId === null){
     // join the open game or start a new game
     if( openGame === null){
-      console.log('openGame', openGame);
       openGame = new Game({});
       openGame.setWhite(user);
       openGame.save(); // no need to wait for promise, as there is nothing to do
       // on save
-      console.log('new openGame for user', user.id);
-      console.log('new openGame', openGame);
     } else {
       openGame.setBlack(user);
       openGame.save()
       .then(function(game){
 
-        console.log('joined game', game)
-        console.log('black', game.blackId);
-        console.log('white', game.whiteId);
 
         let message = JSON.stringify({
           type: 'joined_game',
@@ -55,7 +49,6 @@ function joinGame(user, payload){
 
         // save the activeGame id to the two users so they can resume it if the 
         //  connection drops
-        console.log('Connections[game.blackId]', Connections[game.blackId]);
         Connections[game.blackId].user.activeGameId = game.id;
         Connections[game.blackId].user.save();
         Connections[game.whiteId].user.activeGameId = game.id;
@@ -71,17 +64,14 @@ function joinGame(user, payload){
 }
 
 function makeMove(user, payload){
-  console.log('makeMove', user, payload);
   let game = Connections[user.id].game;
   Move.count({where:{gameId: game.id}}).then(function(count){
     let turn = (count % 2 == 0) ? 'white' : 'black';
     let myTurn = game[turn + 'Id'] == user.id;
     // validation - the user is messing with the game, ignore the request
     if(!myTurn || turn != payload.from.color){
-      console.log('not my turn...')
       return;
     }
-    console.log('create Move');
     let move = new Move({
       userId: user.id,
       gameId: game.id,
@@ -95,12 +85,10 @@ function makeMove(user, payload){
       toColor: payload.to.color
     })
     move.save().then(function(result){
-      console.log('saved move');
       let otherPlayerId = (turn == 'white') ? game.blackId : game.whiteId;
       let message = JSON.stringify({
         type: 'made_move', 
         payload: move.serialize()});
-      console.log('sending move to player', otherPlayerId);
       Connections[otherPlayerId].socket.send(message);
       // TODO: broadcast move to any spectators?
     });
@@ -117,7 +105,6 @@ module.exports = function(server, sessionParser){
     verifyClient: function(info, done){
       // use the 
       sessionParser(info.req, {}, function(){
-        console.log('Session is parsed!', info.req.session)
         // move on to the next handler - no requests are rejected, as even guest 
         //  users can watch games via the web socket
         done(true)
@@ -150,7 +137,6 @@ module.exports = function(server, sessionParser){
           game: null 
         };
         if (user.activeGameId != null){
-          console.log('user ' + user.id + ' has reconnected and they had an active game ' + user.activeGameId)
           // user has reconnected while they still had an active game. Go ahead
           //  and reconnect them to it
           Game.findOne({where: {id: user.activeGameId}}).then(function(game){
@@ -178,8 +164,6 @@ module.exports = function(server, sessionParser){
       payload: Statistics
     })
 
-    console.log('Statistics');
-    console.log(Statistics);
 
     // mark the socket as alive so it won't be automatically closed again by the 
     //  heartbeat loop
@@ -189,12 +173,10 @@ module.exports = function(server, sessionParser){
     //  not no pong response comes back within the 30 seconds, the socket will 
     //  be closed.
     socket.on('pong', function heartbeat() {
-      console.log('socket is still alive')
       socket.isAlive = true;
     });
 
     socket.on('close', function(){
-      console.log('socket closed');
       if (req.session.passport !== undefined && req.session.passport.user !== undefined){
         Statistics.connections.users -= 1;
       } else {
@@ -207,7 +189,6 @@ module.exports = function(server, sessionParser){
 
     // TODO: set timeout to send ping messages to see if users are still around
     socket.on('message', function incoming(message) {
-      console.log('message', message)
       // all websocket messages are JSON objects
       let data = JSON.parse(message);
       switch(data.type){
@@ -220,16 +201,13 @@ module.exports = function(server, sessionParser){
           makeMove(user, data.payload);
           break;
         default:
-          console.log('unknown web socket message', message)
       }
     });
   });
 
   function broadcast(data) {
-    console.log('broadcast');
     WebSocketServer.clients.forEach(function each(socket) {
       if (socket.readyState === WebSocket.OPEN) {
-        console.log('send ', data)
         socket.send(JSON.stringify(data));
       }
     });
@@ -240,10 +218,8 @@ module.exports = function(server, sessionParser){
   const interval = setInterval(function ping() {
     WebSocketServer.clients.forEach(function each(socket) {
       if (socket.isAlive === false){
-        console.log('closing socket')
         socket.terminate();
       } else {
-        console.log('ping socket')
         socket.isAlive = false;
         socket.ping();
       }

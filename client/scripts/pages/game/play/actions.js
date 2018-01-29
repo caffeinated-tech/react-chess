@@ -1,9 +1,11 @@
 const Reflux = require('reflux');
 
-var GameActions = Reflux.createActions({
+var PlayActions = Reflux.createActions({
   'clickSquare': {},
   'dragPiece': {},
-  'dropOnSquare': {}
+  'dropOnSquare': {},
+  'setupGame': {},
+  'moveMade': {}
 });
 
-module.exports = GameActions;
+module.exports = PlayActions;

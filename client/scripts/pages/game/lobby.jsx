@@ -9,13 +9,11 @@ const LobbyStore = require('./lobby/store.js');
 class Lobby extends Reflux.Component {
   constructor(props){
     super(props);
-    this.state = {}; // our store will add its own state to the component's
-    this.store = LobbyStore; // <- just assign the store class itself
+    this.state = {};
+    this.store = LobbyStore;
   }
 
   render() {
-    console.log('this.state.code', this.state.code);
-    console.log('this.props', this.props);
     return (
       <div className="centered">
         <div className="pure-g">
@@ -24,37 +22,17 @@ class Lobby extends Reflux.Component {
               Game Lobby
             </h1>
           </div>
-          <div className="pure-u-18 -24">
+          <div className="pure-u-1">
             <p>
-              Create a new game to invite a specific friend or let any other 
-                player 
+              Play against the next person looking for a game
             </p>
           </div>
-          <div className="pure-u-4-24">
+          <div className="pure-u-1">
             <Link 
               to="/game/new" 
-              className="pure-button pure-button-primary">Just Play</Link>
+              className="pure-button pure-button-primary">Let's Play</Link>
           </div>
-
-          <div className="pure-u-1">
-            <label htmlFor="code">Join a game by code</label>
-            <input 
-              id="code" 
-              type="text" 
-              value={this.state.code}
-              onChange={function(event){
-                this.setState({code: event.target.value});}.bind(this)}
-              placeholder="Enter unique game code here"/>
-            <Link 
-              to={ "/game/play/" + this.state.code }
-              className="pure-button pure-button-primary">Join</Link>
-          </div>
-
-          <div className="pure-u-1">
-            <Link 
-              to="/game/watch" 
-              className="pure-button pure-button-primary">Spectate</Link>
-          </div>
+          <br/>
         </div>
       </div>
     );

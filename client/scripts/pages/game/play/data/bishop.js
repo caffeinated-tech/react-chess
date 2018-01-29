@@ -18,7 +18,7 @@ class Bishop extends Piece {
     let validMoves = [];
 
     possibleMoves.forEach(function(coordinates){
-      for(var i = 1; i < 7; i++){
+      for(var i = 1; i < 8; i++){
         let row = this.row + coordinates[0]*i;
         let column = this.column + coordinates[1]*i;
 
