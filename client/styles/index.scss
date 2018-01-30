@@ -52,7 +52,7 @@ header {
     background: linear-gradient( 
     	rgba(0, 0, 0, 0.5), 
     	rgba(0, 0, 0, 0.5) ), 
-    	url('images/chess-background-1.jpg');
+    	url('/images/chess-background-1.jpg');
 	background-size:     cover;                      
     background-repeat:   no-repeat;
     background-position: center center;   
@@ -91,10 +91,24 @@ header {
 // stats
 .stats {
   border: 2px solid white;
+  margin: 20px;
   padding: 1em;
   border-radius:10px;
   h4{
     text-align: left;
+  }
+  a {
+    margin-left: 5px;
+  }
+  .board {
+    height: 200px;
+    width: 200px;
+  }
+}
+
+.tall {
+  .stats {
+    height: 300px;
   }
 }
 
